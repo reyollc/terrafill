@@ -1,0 +1,4 @@
+# Alles gehoert dem Repo-Owner: jeder Pull Request fragt automatisch
+# @reyollc als Reviewer an. main ist zusaetzlich so geschuetzt, dass nur
+# ueber Pull Requests gemergt werden kann.
+* @reyollc

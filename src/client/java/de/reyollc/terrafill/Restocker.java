@@ -296,7 +296,7 @@ final class Restocker {
         selectSlot(p, boxSlot);
         lookAt(p, hit);
         mc.gameMode.useItemOn(p, InteractionHand.MAIN_HAND, new BlockHitResult(hit, Direction.UP, under, false));
-        p.swing(InteractionHand.MAIN_HAND);
+        Compat.swing(p);
         boxPos = spot.immutable();
     }
 
@@ -504,7 +504,7 @@ final class Restocker {
         selectSlot(p, bestToolSlot(p, st, slot));
         lookAt(p, Vec3.atCenterOf(boxPos));
         if (mc.gameMode.continueDestroyBlock(boxPos, faceToward(p.getEyePosition(), boxPos))) {
-            p.swing(InteractionHand.MAIN_HAND);
+            Compat.swing(p);
         }
     }
 

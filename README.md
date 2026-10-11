@@ -1,18 +1,36 @@
 # TerraFill
 
-Clientseitiger Fabric-Mod fuer Minecraft 26.2. Fuellt einen Bereich Ebene fuer
-Ebene von unten nach oben mit einem Baublock auf - so schnell, wie der Server
-es annimmt. Nachschub kommt aus Shulkerboxen im Inventar, die der Mod selbst
-setzt, ausraeumt und wieder einsteckt.
+Clientseitiger Fabric-Mod fuer Minecraft 26.2 und 26.3. Fuellt einen Bereich
+Ebene fuer Ebene von unten nach oben mit einem Baublock auf - so schnell, wie
+der Server es annimmt. Nachschub kommt aus Shulkerboxen im Inventar, die der
+Mod selbst setzt, ausraeumt und wieder einsteckt.
 
 ## Bauen
 
 ```
-./gradlew build          # JDK 25 noetig, Jar landet in build/libs/
+./gradlew build               # Standard: Minecraft 26.2
+./gradlew build -Pmc=26.3     # fuer Minecraft 26.3
 ```
 
-Braucht Fabric Loader und Fabric API fuer 26.2 im Client. Auf dem Server muss
-nichts installiert sein.
+JDK 25 noetig; die Jar landet in `build/libs/` und traegt die Ziel-MC-Version
+im Namen (`terrafill-1.0.0+26.2.jar` bzw. `...+26.3.jar`). `-Pmc` waehlt
+Minecraft- und Fabric-API-Version, den Bereich in `fabric.mod.json` und den
+passenden Compat-Quellordner (siehe unten). Unterstuetzte Werte stehen in der
+`mcVersions`-Tabelle in `build.gradle` - eine neue MC-Version ist dort ein
+Eintrag plus ein `src/compat-<version>/java`, falls die API abweicht.
+
+Braucht Fabric Loader und Fabric API im Client (fuer die jeweilige MC-Version).
+Auf dem Server muss nichts installiert sein.
+
+### Mehrere Versionen aus einem Branch
+
+Fast der ganze Code ist versionsunabhaengig. Der einzige API-Unterschied
+zwischen 26.2 und 26.3 (`LivingEntity.swing` hat in 26.3 zusaetzliche
+Parameter) steckt in einer winzigen `Compat`-Klasse, von der es je eine
+Fassung unter `src/compat-26.2/java` und `src/compat-26.3/java` gibt; `-Pmc`
+nimmt genau eine davon in den Build. Bewusst echter Quellcode statt Reflection,
+weil Loom die Mod zur Laufzeit auf Intermediary-Namen remappt - ueber Reflection
+angesprochene Methoden wuerden dort nicht gefunden.
 
 ## Bedienung
 

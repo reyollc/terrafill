@@ -1,13 +1,16 @@
-# Automatically build the project and run any configured tests for every push
-# and submitted pull request. This can help catch issues that only occur on
-# certain platforms or Java versions, and provides a first line of defence
-# against bad commits.
+# Automatically build the project for every push and submitted pull request,
+# across all supported Minecraft versions. This catches issues early and
+# provides a first line of defence against bad commits.
 
 name: build
 on: [pull_request, push]
 
 jobs:
   build:
+    strategy:
+      fail-fast: false
+      matrix:
+        mc: ['26.2', '26.3']
     runs-on: ubuntu-24.04
     steps:
       - name: checkout repository
@@ -22,9 +25,9 @@ jobs:
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
       - name: build
-        run: ./gradlew build
+        run: ./gradlew build -Pmc=${{ matrix.mc }}
       - name: capture build artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: Artifacts
+          name: Artifacts-${{ matrix.mc }}
           path: build/libs/

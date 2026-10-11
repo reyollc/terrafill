@@ -31,6 +31,30 @@ Wegen `splitEnvironmentSourceSets()` liegen die Quellen unter `src/client/java/`
 Sprachdateien unter `src/main/resources/assets/terrafill/lang/` (de_de, en_us);
 jeder neue Chat-Text braucht beide.
 
+## Multi-Version-Build (26.2 + 26.3)
+
+`./gradlew build` baut 26.2 (Standard), `./gradlew build -Pmc=26.3` die 26.3-Jar.
+Die Jar traegt die MC-Version im Namen (`terrafill-1.0.0+26.2.jar`), damit sich
+die Varianten nicht ueberschreiben.
+
+- **`mcVersions`-Tabelle in `build.gradle`** ist die einzige Wahrheit: pro
+  `-Pmc`-Wert Minecraft-Version, Fabric-API-Version und der Bereich fuer
+  `fabric.mod.json`. `minecraft_version`/`fabric_api_version` stehen **nicht**
+  mehr in `gradle.properties`. `fabric.mod.json` hat `"minecraft":
+  "${minecraft_range}"`, expandiert in `processResources`.
+- **Versionsabhaengiger Code** steckt in `Compat` (`Compat.swing(entity)`), je
+  eine Fassung unter `src/compat-26.2/java` und `src/compat-26.3/java`;
+  `build.gradle` haengt per `sourceSets.client.java.srcDir "src/compat-${mc}/
+  java"` genau eine an. Einziger bekannter Unterschied 26.2 -> 26.3:
+  `LivingEntity.swing(hand)` wurde zu `swing(hand, SwingAnimation.DEFAULT,
+  false)`. **Echter Quellcode, keine Reflection** - Loom remappt die Mod zur
+  Laufzeit auf Intermediary, per String angesprochene Methoden/Felder (`swing`,
+  `SwingAnimation.DEFAULT`) gaebe es dort nicht.
+- **Neue MC-Version aufnehmen:** Eintrag in `mcVersions` ergaenzen; weicht die
+  API ab, zusaetzlich `src/compat-<version>/java/.../Compat.java` anlegen (sonst
+  faellt der Build mangels Compat-Ordner auf, bzw. man kopiert den passenden).
+  CI (`.github/workflows/build.yml`) baut die Matrix `mc: ['26.2', '26.3']`.
+
 ## API-Fakten, gegen die 26.2-Jar geprueft
 
 Die Jars liegen im Loom-Cache (`.gradle/loom-cache/minecraftMaven/net/minecraft/`),

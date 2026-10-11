@@ -3,6 +3,23 @@ plugins {
 	id 'maven-publish'
 }
 
+// Welche Minecraft-Version gebaut wird: ./gradlew build -Pmc=26.3
+// Ohne -Pmc wird die Standardversion gebaut. Je Version die passende
+// Fabric-API und der Bereich fuer fabric.mod.json; der versionsabhaengige
+// Quellcode liegt unter src/compat-<mc>/java (siehe unten).
+def defaultMc = '26.2'
+def mc = (project.findProperty('mc') ?: defaultMc).toString()
+def mcVersions = [
+	'26.2': [minecraft: '26.2', fabricApi: '0.159.0+26.2', range: '~26.2'],
+	'26.3': [minecraft: '26.3', fabricApi: '0.162.0+26.3', range: '~26.3'],
+]
+def sel = mcVersions[mc]
+if (sel == null) {
+	throw new GradleException("Unbekanntes -Pmc=${mc}. Unterstuetzt: ${mcVersions.keySet().join(', ')}")
+}
+// Mod-Version traegt die Ziel-MC-Version, damit sich die Jars nicht ueberschreiben.
+version = "${project.version}+${mc}"
+
 repositories {
 	// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because
@@ -22,21 +39,30 @@ loom {
 	}
 }
 
+// Der einzige API-Unterschied zwischen den Versionen (LivingEntity.swing) steckt
+// in einer Compat-Klasse; je Ziel-MC-Version wird genau ein Ordner dazugenommen.
+// Echter Quellcode (nicht Reflection), damit Loom die Methoden korrekt auf
+// Intermediary remappt.
+sourceSets.client.java.srcDir "src/compat-${mc}/java"
+
 dependencies {
-	// To change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	// Minecraft- und Fabric-API-Version kommen aus der mcVersions-Tabelle oben
+	// (gesteuert ueber -Pmc); der Loader steht in gradle.properties.
+	minecraft "com.mojang:minecraft:${sel.minecraft}"
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${sel.fabricApi}"
 }
 
 processResources {
 	def version = project.version
+	def minecraftRange = sel.range
 	inputs.property "version", version
+	inputs.property "minecraftRange", minecraftRange
 
 	filesMatching("fabric.mod.json") {
-		expand "version": version
+		expand "version": version, "minecraft_range": minecraftRange
 	}
 }
 

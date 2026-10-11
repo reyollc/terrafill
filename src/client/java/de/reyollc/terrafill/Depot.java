@@ -410,7 +410,7 @@ final class Depot {
         Restocker.selectSlot(p, boxSlot);
         Restocker.lookAt(p, hit);
         mc.gameMode.useItemOn(p, InteractionHand.MAIN_HAND, new BlockHitResult(hit, Direction.UP, under, false));
-        p.swing(InteractionHand.MAIN_HAND);
+        Compat.swing(p);
         boxPos = spot.immutable();
         boxFull = false;
     }
@@ -503,7 +503,7 @@ final class Depot {
         Restocker.selectSlot(p, Restocker.bestToolSlot(p, st, slot));
         Restocker.lookAt(p, Vec3.atCenterOf(boxPos));
         if (mc.gameMode.continueDestroyBlock(boxPos, Restocker.faceToward(p.getEyePosition(), boxPos))) {
-            p.swing(InteractionHand.MAIN_HAND);
+            Compat.swing(p);
         }
     }
 

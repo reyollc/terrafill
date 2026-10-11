@@ -1111,7 +1111,7 @@ public final class FillTask {
             placed++;
             pending.put(target.asLong(), tick);
             lastPlaceTick = tick;
-            p.swing(InteractionHand.MAIN_HAND);
+            Compat.swing(p);
             pillarTarget = null;
         }
     }
@@ -1474,7 +1474,7 @@ public final class FillTask {
 
         if (p.getAttackStrengthScale(0.0f) >= 1.0f) {
             mc.gameMode.attack(p, target);
-            p.swing(InteractionHand.MAIN_HAND);
+            Compat.swing(p);
         }
     }
 
@@ -1583,7 +1583,7 @@ public final class FillTask {
             if (done >= 3) break;
         }
         if (done < 3) done += shelterPlace(p, level, feet.above(2), reach, body);
-        if (done > 0) p.swing(InteractionHand.MAIN_HAND);
+        if (done > 0) Compat.swing(p);
     }
 
     private int shelterPlace(LocalPlayer p, ClientLevel level, BlockPos c, double reach, AABB body) {
@@ -1824,7 +1824,7 @@ public final class FillTask {
             breakSoft(p, level, softTarget);
             progress++;
         }
-        if (placedNow > 0) p.swing(InteractionHand.MAIN_HAND);
+        if (placedNow > 0) Compat.swing(p);
         return progress;
     }
 
@@ -1905,7 +1905,7 @@ public final class FillTask {
         selectSlot(p, slot);
         Restocker.lookAt(p, Vec3.atCenterOf(c));
         if (mc.gameMode.continueDestroyBlock(c, Restocker.faceToward(p.getEyePosition(), c))) {
-            p.swing(InteractionHand.MAIN_HAND);
+            Compat.swing(p);
         }
     }
 
@@ -1927,7 +1927,7 @@ public final class FillTask {
     private void shove(LocalPlayer p, LivingEntity animal) {
         Restocker.lookAt(p, animal.getEyePosition());
         mc.gameMode.attack(p, animal);
-        p.swing(InteractionHand.MAIN_HAND);
+        Compat.swing(p);
     }
 
     private static boolean offCenter(LocalPlayer p) {

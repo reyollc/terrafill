@@ -1,0 +1,20 @@
+{
+	"schemaVersion": 1,
+	"id": "terrafill",
+	"version": "${version}",
+	"name": "TerraFill",
+	"description": "Fuellt einen Bereich von unten nach oben mit einem Baublock auf, so schnell es geht. Nachschub kommt aus Shulkerboxen im Inventar.",
+	"authors": ["Reyollc"],
+	"license": "MIT",
+	"icon": "assets/terrafill/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": ["de.reyollc.terrafill.TerraFill"]
+	},
+	"depends": {
+		"fabricloader": ">=0.18.4",
+		"minecraft": "~26.2",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}
